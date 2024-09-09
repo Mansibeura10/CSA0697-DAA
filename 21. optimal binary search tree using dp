@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX 100
+
+// Function to calculate the cost of optimal BST
+int optimalBST(int freq[], int n) {
+    int cost[MAX][MAX];
+    int sum[MAX][MAX];
+    
+    // Initialize sum and cost matrices
+    for (int i = 0; i < n; i++) {
+        sum[i][i] = freq[i];
+        cost[i][i] = freq[i];
+        for (int j = i + 1; j < n; j++) {
+            sum[i][j] = sum[i][j - 1] + freq[j];
+            cost[i][j] = INT_MAX;
+        }
+    }
+    
+    // Compute the cost of optimal BST
+    for (int len = 2; len <= n; len++) {
+        for (int i = 0; i <= n - len; i++) {
+            int j = i + len - 1;
+            for (int r = i; r <= j; r++) {
+                int c = ((r > i) ? cost[i][r - 1] : 0) + 
+                        ((r < j) ? cost[r + 1][j] : 0) + 
+                        sum[i][j];
+                if (c < cost[i][j]) {
+                    cost[i][j] = c;
+                }
+            }
+        }
+    }
+    
+    return cost[0][n - 1];
+}
+
+int main() {
+    int n;
+    
+    // Input the number of keys
+    printf("Enter the number of keys: ");
+    scanf("%d", &n);
+    
+    int freq[n];
+    
+    // Input the frequencies of keys
+    printf("Enter the frequencies of the keys:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &freq[i]);
+    }
+    
+    // Find the optimal cost of the binary search tree
+    int result = optimalBST(freq, n);
+    printf("The cost of the optimal binary search tree is: %d\n", result);
+    
+    return 0;
+}
