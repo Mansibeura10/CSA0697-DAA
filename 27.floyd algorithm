@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define INF INT_MAX
+#define MAX 100 // Maximum number of nodes
+
+void floydWarshall(int graph[MAX][MAX], int dist[MAX][MAX], int n) {
+    // Initialize the distance matrix with the graph's edge weights
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            dist[i][j] = graph[i][j];
+        }
+    }
+
+    // Floyd-Warshall Algorithm
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (dist[i][k] != INF && dist[k][j] != INF && dist[i][j] > dist[i][k] + dist[k][j]) {
+                    dist[i][j] = dist[i][k] + dist[k][j];
+                }
+            }
+        }
+    }
+}
+
+void printSolution(int dist[MAX][MAX], int n) {
+    printf("The shortest distances between every pair of vertices:\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            if (dist[i][j] == INF) {
+                printf("INF\t");
+            } else {
+                printf("%d\t", dist[i][j]);
+            }
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int n;
+    int graph[MAX][MAX]; // Adjacency matrix for the graph
+    int dist[MAX][MAX];  // Distance matrix
+
+    // Input the number of nodes
+    printf("Enter the number of nodes: ");
+    scanf("%d", &n);
+
+    // Input the adjacency matrix
+    printf("Enter the adjacency matrix (use 9999 for infinity):\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &graph[i][j]);
+            if (graph[i][j] == 9999) {
+                graph[i][j] = INF; // Use INF to represent no path
+            }
+        }
+    }
+
+    // Run Floyd-Warshall algorithm
+    floydWarshall(graph, dist, n);
+
+    // Print the shortest distance matrix
+    printSolution(dist, n);
+
+    return 0;
+}
